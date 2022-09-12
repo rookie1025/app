@@ -1,12 +1,10 @@
-node() {
+node('jenkins-slave') {
     
      stage('test pipeline') {
         sh(script: """
             echo "hello"
             rm -rf app
             git clone https://github.com/rookie1025/app.git
-            yum install docker -y 
-            service docker start
             docker build . -t test
         """)
     }
