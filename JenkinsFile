@@ -3,8 +3,10 @@ node() {
      stage('test pipeline') {
         sh(script: """
             echo "hello"
-           git clone https://github.com/rookie1025/app.git
-           docker build . -t test
+            git clone https://github.com/rookie1025/app.git
+            sudo yum install docker -y 
+            sudo service docker start
+            docker build . -t test
         """)
     }
 }
