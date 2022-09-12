@@ -5,8 +5,8 @@ node() {
             echo "hello"
             rm -rf app
             git clone https://github.com/rookie1025/app.git
-            sudo yum install docker -y 
-            sudo service docker start
+            yum install docker -y 
+            service docker start
             docker build . -t test
         """)
     }
