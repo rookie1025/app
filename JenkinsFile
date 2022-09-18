@@ -32,32 +32,23 @@ pipeline {
     stage('Build-Docker-Image') {
       steps {
         container('docker') {
+          sh 'echo "building image"'
           sh 'docker build -t rookie1025/testing-image:latest .'
+          
+          sh 'echo "logging into dokcer hub"'
+          withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'password', usernameVariable: 'user')]) {
+                    sh 'docker login -u $user -p $password'
+                    }
+            
+          sh 'echo "Pushing image"'
+          sh 'docker push rookie1025/testing-image:latest'
+          
+          sh 'echo "pruning image"'
+          sh 'docker image prune -af'
         }
       }
     }
-    stage('Login-Into-Docker') {
-      steps {
-        container('docker') {
-          sh 'docker login -u rookie1025 -p Yarn@hub12'
-      }
-    }
-    }
-     stage('Push-Images-Docker-to-DockerHub') {
-      steps {
-        container('docker') {
-          sh 'docker push rookie1025/testing-image:latest'
-      }
-    }
-     }
-    stage('Remove docker Images') {
-      steps {
-        container('docker') {
-          sh 'docker image prune -af'
-      }
-    }
-     }
-  }
+}
   
     post {
       always {
