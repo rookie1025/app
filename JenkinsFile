@@ -33,7 +33,7 @@ pipeline {
       steps {
         container('docker') {
           sh 'echo "building image"'
-          sh 'docker build -t rookie1025/testing-image:latest .'
+          sh 'docker build -t rookie1025/cliff-app:latest .'
           
           sh 'echo "logging into dokcer hub"'
           withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'password', usernameVariable: 'user')]) {
@@ -41,7 +41,7 @@ pipeline {
                     }
             
           sh 'echo "Pushing image"'
-          sh 'docker push rookie1025/testing-image:latest'
+          sh 'docker push rookie1025/cliff-app:latest'
           
           sh 'echo "pruning image"'
           sh 'docker image prune -af'
