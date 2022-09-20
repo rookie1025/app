@@ -1,6 +1,6 @@
 pipeline {
   agent {
-    kubernetes {
+    kubernetes { //use kubernetes agen for the pipeline with below yamltemplate
       yaml '''
         apiVersion: v1
         kind: Pod
@@ -24,14 +24,14 @@ pipeline {
   stages {
     stage('Clone') {
       steps {
-        container('docker') {
+        container('docker') { //clone the code to build pod
           git branch: 'main', changelog: false, poll: false, url: 'https://github.com/rookie1025/app.git'
         }
       }
     }
     stage('Build-Docker-Image') {
       steps {
-        container('docker') {
+        container('docker') { //build image, login to dockerhub and push image
           sh 'echo "building image"'
           sh 'docker build -t rookie1025/cliff-app:latest .'
           
@@ -52,7 +52,7 @@ pipeline {
   
     post {
       always {
-        container('docker') {
+        container('docker') { //logout from dockerhub 
           sh 'docker logout'
       }
       }
