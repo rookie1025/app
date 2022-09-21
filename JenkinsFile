@@ -1,11 +1,22 @@
 pipeline {
   agent {
-    kubernetes { //use kubernetes agen for the pipeline with below yamltemplate
+    kubernetes {
       yaml '''
         apiVersion: v1
         kind: Pod
         spec:
           containers:
+          - name: kubectl
+            image: viejo/kubectl
+            command:
+            - cat
+            tty: true
+            securityContext:
+                privileged: true
+            volumeMounts:
+            - name: kube-config
+              mountPath: /root/.kube/
+              
           - name: docker
             image: docker:latest
             command:
@@ -17,7 +28,10 @@ pipeline {
           volumes:
           - name: docker-sock
             hostPath:
-              path: /var/run/docker.sock    
+              path: /var/run/docker.sock
+          - name: kube-config
+            hostpath:
+              path: /root/.kube
         '''
     }
   }
@@ -48,13 +62,15 @@ pipeline {
         }
       }
     }
-}
-  
-    post {
-      always {
-        container('docker') { //logout from dockerhub 
-          sh 'docker logout'
-      }
+    stage('Copy-deployment-file-and deploy') {
+      steps {
+        container('kubectl') {
+          git branch: 'main', changelog: false, poll: false, url: 'https://github.com/rookie1025/app.git'
+          //sh 'kubectl apply -app.yml'
+          
+        }
       }
     }
+}
+
 }
